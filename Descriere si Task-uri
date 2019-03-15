@@ -1,3 +1,11 @@
+Descriere:
+
+  Un joc 2D de tipul sidescroller platformer, din genre-ul Metroidvania creat in Unreal Engine 4, in care jucatorul
+se deplaseaza printr-o harta interconectata si impartita in diferite locatii ce servesc ca fiind "nivele" ale jocului.
+Obiectivul este sa parcurga fiecare locatie si sa invinga inamicii din acestea, ordinea nu este impusa si ramane la alegerea jucatorului.
+
+
+
 Task-uri:
 
 -UI
@@ -11,11 +19,4 @@ Task-uri:
 -Sound
   -Muzica (meniu  principal, in-game)
   -Sound effects (lovituri, mers, etc.)
-
-  
-Descriere:
-
-  Un joc 2D de tipul sidescroller platformer, din genre-ul Metroidvania creat in Unreal Engine 4, in care jucatorul
-se deplaseaza printr-o harta intercontinentata si impartita in diferite locatii ce servesc ca fiind "nivele" ale jocului.
-Obiectivul este sa parcurga fiecare locatie si sa invinga inamicii din acestea, ordinea nu este impusa si ramane la alegerea jucatorului.
 
