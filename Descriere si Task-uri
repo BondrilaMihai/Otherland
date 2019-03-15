@@ -1,0 +1,21 @@
+Task-uri:
+
+-UI
+  -Meniuri(principal,pause)
+  -HUD
+  
+-Level design & elemente de grafica 
+  -Desenare & implementare harta (un singur nivel mare, interconectat)
+  -Desenare & implementare caracter (main player, enemies)
+  
+-Sound
+  -Muzica (meniu  principal, in-game)
+  -Sound effects (lovituri, mers, etc.)
+
+  
+Descriere:
+
+  Un joc 2D de tipul sidescroller platformer, din genre-ul Metroidvania creat in Unreal Engine 4, in care jucatorul
+se deplaseaza printr-o harta intercontinentata si impartita in diferite locatii ce servesc ca fiind "nivele" ale jocului.
+Obiectivul este sa parcurga fiecare locatie si sa invinga inamicii din acestea, ordinea nu este impusa si ramane la alegerea jucatorului.
+
