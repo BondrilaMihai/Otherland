@@ -7,45 +7,24 @@
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/Controller.h"
 
-/* PlayerMinMaxValues */
-
-PlayerMinMaxValues::PlayerMinMaxValues()
-	: MaxHealth(0), MinHealth(0), MaxShield(0), MinShield(0), MaxEnergy(0), MinEnergy(0)
-{
-}
-
-PlayerMinMaxValues::PlayerMinMaxValues(const AMyPlayer& player)
-	: MinHealth(0), MinShield(0), MinEnergy(0)
-{
-	MaxHealth = player.getHealth();
-	MaxShield = player.getShield();
-	MaxEnergy = player.getEnergy();
-}
-
-void PlayerMinMaxValues::UpdateValues(const AMyPlayer& player)
-{
-	MaxHealth = player.getHealth();
-	MaxShield = player.getShield();
-	MaxEnergy = player.getEnergy();
-}
-
 /* AMyPlayer */
 
 AMyPlayer::AMyPlayer()
-	: _isSKeyPressed(false), _isDead(false), _health(500), _energyConversion(1), _damage(50)
+	: _isSKeyPressed(false), _isDead(false), _health(500), _damage(50), _energyConversion(1), _maxHealth(500), _minHealth(0), _maxShield(500 - 500 / 4), _minShield(0),
+	_maxEnergy(500 / 4), _minEnergy(0)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	setPlayerState(EPlayerStates::State_Idle);
 	_energy = 500/4;
 	_shield = 500 - _energy;
-	_playerMinMaxValues.UpdateValues(*this);
 }
 
 // Called when the game starts or when spawned
 void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+	InitSpells();
 }
 
 // Called every frame
@@ -74,35 +53,35 @@ void AMyPlayer::setPlayerState(EPlayerStates state)
 	_playerState = state;
 }
 
-uint16 AMyPlayer::getHealth() const
+int32 AMyPlayer::getHealth() const
 {
 	return _health;
 }
 
-void AMyPlayer::setHealth(uint16 amount)
+void AMyPlayer::setHealth(int32 amount)
 {
-	if(_health - amount < _playerMinMaxValues.MinHealth)
+	if(amount < _minHealth)
 		_health = 0;
 
-	else if(_health + amount > _playerMinMaxValues.MaxHealth)
-		_health = _playerMinMaxValues.MaxHealth;
+	//else if(_health + amount > _maxHealth)
+		//_health = _maxHealth;
 
 	else
 		_health = amount;
 }
 
-uint16 AMyPlayer::getShield() const
+int32 AMyPlayer::getShield() const
 {
 	return _shield;
 }
 
-void AMyPlayer::setShield(uint16 amount)
+void AMyPlayer::setShield(int32 amount)
 {
-	if(_shield - amount < _playerMinMaxValues.MinShield)
+	if(amount < _minShield)
 		_shield = 0;
 
-	else if(_shield + amount > _playerMinMaxValues.MaxShield)
-		_shield = _playerMinMaxValues.MaxShield;
+	//else if(_shield + amount > _maxShield)
+		//_shield =_maxShield;
 
 	else
 		_shield = amount;
@@ -118,18 +97,18 @@ void AMyPlayer::setDamage(uint8 amount)
 	_damage = amount;
 }
 
-uint16 AMyPlayer::getEnergy() const
+int32 AMyPlayer::getEnergy() const
 {
 	return _energy;
 }
 
-void AMyPlayer::setEnergy(uint16 amount)
+void AMyPlayer::setEnergy(int32 amount)
 {
-	if(_energy - amount < _playerMinMaxValues.MinEnergy)
+	if(_energy - amount < _minEnergy)
 		_energy = 0;
 
-	else if(_energy + amount > _playerMinMaxValues.MaxEnergy)
-		_energy = _playerMinMaxValues.MaxEnergy;
+	//else if(_energy + amount > _maxEnergy)
+		//_energy = _maxEnergy;
 
 	else
 		_energy = amount;
@@ -149,16 +128,83 @@ void AMyPlayer::setEnergyConversion(uint8 amount)
 		_energyConversion = 1;
 }
 
-void AMyPlayer::TakeDamage(uint16 amount)
+int32 AMyPlayer::getMaxHealth() const
 {
-	uint16 tempAmount = amount;
+	return _maxHealth;
+}
+
+void AMyPlayer::setMaxHealth(int32 amount)
+{
+	_maxHealth = amount;
+}
+
+int32 AMyPlayer::getMinHealth() const
+{
+	return _minHealth;
+}
+
+void AMyPlayer::setMinHealth(int32 amount)
+{
+	_minHealth = amount;
+}
+
+int32 AMyPlayer::getMaxShield() const
+{
+	return _maxShield;
+}
+
+void AMyPlayer::setMaxShield(int32 amount)
+{
+	_maxShield = amount;
+}
+
+int32 AMyPlayer::getMinShield() const
+{
+	return _minShield;
+}
+
+void AMyPlayer::setMinShield(int32 amount)
+{
+	_minShield = amount;
+}
+
+int32 AMyPlayer::getMaxEnergy() const
+{
+	return _maxEnergy;
+}
+
+void AMyPlayer::setMaxEnergy(int32 amount)
+{
+	_maxEnergy = amount;
+}
+
+int32 AMyPlayer::getMinEnergy() const
+{
+	return _minEnergy;
+}
+
+void AMyPlayer::setMinEnergy(int32 amount)
+{
+	_minEnergy = amount;
+}
+
+void AMyPlayer::UpdateMaxValues(const AMyPlayer & player)
+{
+	_maxHealth = player.getHealth();
+	_maxShield = player.getShield();
+	_maxEnergy = player.getEnergy();
+}
+
+void AMyPlayer::MyTakeDamage(int32 amount)
+{
+	int32 tempAmount = amount;
 
 	if(getShield())
 	{
-		if(getShield() - tempAmount <= _playerMinMaxValues.MinShield)
+		if(getShield() - tempAmount <= _minShield)
 		{
 			tempAmount -= getShield();
-			setShield(_playerMinMaxValues.MinShield);
+			setShield(_minShield);
 			setHealth(getHealth() - tempAmount);
 		}
 
@@ -175,10 +221,10 @@ void AMyPlayer::TakeDamage(uint16 amount)
 
 void AMyPlayer::UpdateEnergyConversion()
 {
-	_energy = (_energyConversion / 4) * _playerMinMaxValues.MaxShield;
-	_shield = _playerMinMaxValues.MaxShield - _energy;
+	_energy = (_energyConversion / 4) * _maxShield;
+	_shield = _maxShield - _energy;
 
-	_playerMinMaxValues.UpdateValues(*this);
+	UpdateMaxValues(*this);
 }
 
 bool AMyPlayer::isSKeyPressed() const
@@ -208,14 +254,39 @@ void AMyPlayer::setDead(bool value)
 
 /* ABILITIES */
 
+void AMyPlayer::InitSpells()
+{
+	_shadowstep = NewObject<USpellBase>();
+	_shadowstep->init(0, 25, "Shadowstep", true, 0);
+
+	_spiritDrop = NewObject<USpellBase>();
+	_spiritDrop->init(0, 50, "SpiritDrop", true, 100);
+}
+
+void AMyPlayer::CastSpell(const USpellBase& spell)
+{
+	if(getEnergy() && !(getEnergy() - spell.getCost() < _minEnergy))
+	{
+		setEnergy(getEnergy() - spell.getCost());
+
+		FString name = spell.getName();
+
+		if(name == "Shadowstep")
+			StartShadowstep();
+
+		else if(name == "SpiritDrop")
+			StartSpiritDrop();
+	}
+}
+
 // Choose between shadowstep and spirit slam when E is pressed
 void AMyPlayer::ChooseAbility()
 {
-	if((getPlayerState() == EPlayerStates::State_Jumping) && isSKeyPressed())
-		StartSpiritSlam();
+	if ((getPlayerState() == EPlayerStates::State_Jumping) && isSKeyPressed())
+		CastSpell(*_spiritDrop);
 
-	else if(getPlayerState() == EPlayerStates::State_Idle)
-		StartShadowstep();
+	else if (getPlayerState() == EPlayerStates::State_Idle)
+		CastSpell(*_shadowstep);
 }
 
 // Cast shadowstep
@@ -237,7 +308,7 @@ void AMyPlayer::FinishShadowstep()
 }
 
 // Cast spirit slam
-void AMyPlayer::StartSpiritSlam()
+void AMyPlayer::StartSpiritDrop()
 {
 	LaunchCharacter(FVector(0.0f, 0.0f, -2000.0f), false, false);
 }
