@@ -11,13 +11,28 @@ USpellBase::~USpellBase()
 {
 }
 
-void USpellBase::init(uint8 cooldown, uint8 cost, FString name, bool canBeCast, uint8 damage)
+void USpellBase::init(uint8 cooldown, uint8 cost, FString name, bool canBeCast, AMyCharacter* caster, uint8 damage)
 {
 	_cooldown = cooldown;
 	_cost = cost;
 	_name = name;
 	_canBeCast = canBeCast;
 	_damage = damage;
+	_caster = caster;
+}
+
+void USpellBase::Behaviour()
+{
+}
+
+void USpellBase::CastSpell()
+{
+	if (getCaster()->getEnergy() && !(getCaster()->getEnergy() - getCost() < getCaster()->getMinEnergy()))
+	{
+		getCaster()->setEnergy(getCaster()->getEnergy() - getCost());
+
+		Behaviour();
+	}
 }
 
 uint8 USpellBase::getCooldown() const
@@ -68,4 +83,9 @@ FString USpellBase::getName() const
 void USpellBase::setName(FString name)
 {
 	_name = name;
+}
+
+AMyCharacter* USpellBase::getCaster() const
+{
+	return _caster;
 }
