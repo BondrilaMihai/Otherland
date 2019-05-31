@@ -13,7 +13,9 @@ class OTHERLAND_API USpellBase : public UObject
 {
 	GENERATED_BODY()
 	
+	/** Valoarea permanenta a cooldown-ului, diferit de _currentCooldown care se schimba pentru a indica cat timp din cooldown a mai ramas */
 	uint8 _cooldown;
+	uint8 _currentCooldown;
 	uint8 _cost;
 	uint8 _damage;
 
@@ -33,18 +35,30 @@ public:
 	~USpellBase();
 
 	/** Seteaza valorile, folositi dupa ce apelati constructor-ul */
-	void init(uint8 cooldown, uint8 cost, FString name, bool canBeCast, AMyCharacter* caster, uint8 damage = 0);
+	void init(uint8 cooldown, uint8 currentCooldown, uint8 cost, FString name, bool canBeCast, AMyCharacter* caster, uint8 damage = 0);
 
 	/** Ce face abilitatea cand e folosita si cum se comporta de ex te face invizibil, da damage intr-o anumita zona etc. Trebuie implementata in clasele derivate */
 	virtual void Behaviour();
 
-	/** Verifica daca abilitatea poate fi folosita si invoca functia Behaviour() */
+	/** Ce sunet va reda abilitatea cand e folosita. Trebuie implementata in clasele derivate */
+	virtual void PlaySound();
+
+	/** Verifica daca abilitatea poate fi folosita si invoca functiile StartCooldown() si Behaviour() */
 	void CastSpell();
+
+	/** Porneste cooldown-ul */
+	void StartCooldown();
+
+	/** Reseteaza cooldown-ul curent */
+	void RefreshCooldown();
 
 	/* GETTERS & SETTERS */
 
 	uint8 getCooldown() const;
 	void setCooldown(uint8 cooldown);
+
+	uint8 getCurrentCooldown() const;
+	void setCurrentCooldown(uint8 cooldown);
 
 	uint8 getCost() const;
 	void setCost(uint8 cost);

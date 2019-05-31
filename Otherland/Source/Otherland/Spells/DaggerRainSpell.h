@@ -1,21 +1,19 @@
 #pragma once
 
 #include "Spells/SpellBase.h"
-#include "ShadowstepSpell.generated.h"
+#include "DaggerRainSpell.generated.h"
 
 UCLASS()
-class OTHERLAND_API UShadowstepSpell : public USpellBase
+class OTHERLAND_API UDaggerRainSpell : public USpellBase
 {
 	GENERATED_BODY()
 
 public:
 
-	UShadowstepSpell();
-	~UShadowstepSpell();
+	UDaggerRainSpell();
+	~UDaggerRainSpell();
 
 	void Behaviour();
 	void Finish();
 	void PlaySound();
 };
-
-

@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SpellBase.h"
+#include "TimerManager.h"
 
 USpellBase::USpellBase()
 	: _cooldown(0), _cost(0), _damage(0), _canBeCast(true), _name("UNDEFINED")
@@ -11,9 +12,10 @@ USpellBase::~USpellBase()
 {
 }
 
-void USpellBase::init(uint8 cooldown, uint8 cost, FString name, bool canBeCast, AMyCharacter* caster, uint8 damage)
+void USpellBase::init(uint8 cooldown, uint8 currentCooldown, uint8 cost, FString name, bool canBeCast, AMyCharacter* caster, uint8 damage)
 {
 	_cooldown = cooldown;
+	_currentCooldown = currentCooldown;
 	_cost = cost;
 	_name = name;
 	_canBeCast = canBeCast;
@@ -25,14 +27,33 @@ void USpellBase::Behaviour()
 {
 }
 
+void USpellBase::PlaySound()
+{
+}
+
 void USpellBase::CastSpell()
 {
 	if (getCaster()->getEnergy() && !(getCaster()->getEnergy() - getCost() < getCaster()->getMinEnergy()))
 	{
 		getCaster()->setEnergy(getCaster()->getEnergy() - getCost());
-
+		StartCooldown();
 		Behaviour();
+		PlaySound();
 	}
+}
+
+void USpellBase::StartCooldown()
+{
+	setCurrentCooldown(getCooldown());
+
+	FTimerHandle UnusedHandle;
+
+	getCaster()->GetWorldTimerManager().SetTimer(UnusedHandle, this, &USpellBase::RefreshCooldown, getCooldown(), false);
+}
+
+void USpellBase::RefreshCooldown()
+{
+	setCurrentCooldown(0);
 }
 
 uint8 USpellBase::getCooldown() const
@@ -43,6 +64,16 @@ uint8 USpellBase::getCooldown() const
 void USpellBase::setCooldown(uint8 cooldown)
 {
 	_cooldown = cooldown;
+}
+
+uint8 USpellBase::getCurrentCooldown() const
+{
+	return _currentCooldown;
+}
+
+void USpellBase::setCurrentCooldown(uint8 cooldown)
+{
+	_currentCooldown = cooldown;
 }
 
 uint8 USpellBase::getCost() const
