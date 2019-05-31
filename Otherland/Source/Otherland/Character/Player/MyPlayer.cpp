@@ -149,10 +149,10 @@ void AMyPlayer::SKeyReleased()
 void AMyPlayer::InitSpells()
 {
 	_shadowstep = NewObject<UShadowstepSpell>();
-	_shadowstep->init(0, 25, "Shadowstep", true, this, 0);
+	_shadowstep->init(0, 0, 25, "Shadowstep", true, this, 0);
 
 	_spiritDrop = NewObject<USpiritDropSpell>();
-	_spiritDrop->init(0, 50, "SpiritDrop", true, this, 100);
+	_spiritDrop->init(0, 0, 50, "SpiritDrop", true, this, 100);
 }
 
 void AMyPlayer::ChooseAbility()

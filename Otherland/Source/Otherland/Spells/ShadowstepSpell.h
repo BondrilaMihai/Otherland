@@ -15,6 +15,7 @@ public:
 
 	void Behaviour();
 	void Finish();
+	void PlaySound();
 };
 
 

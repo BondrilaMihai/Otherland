@@ -14,4 +14,5 @@ public:
 	~USpiritDropSpell();
 
 	void Behaviour();
+	void PlaySound();
 };

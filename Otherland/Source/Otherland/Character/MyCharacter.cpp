@@ -8,17 +8,20 @@
 /* AMyCharacter */
 
 AMyCharacter::AMyCharacter()
-	: _isDead(false), _health(0), _energy(0), _damage(0), _maxHealth(0), _minHealth(0), _maxEnergy(0), _minEnergy(0)
+	: _isDead(false), _threshhold25(false), _threshhold50(false), _threshhold75(false), _health(0), _energy(0), _damage(0), _maxHealth(0), _minHealth(0), _maxEnergy(0), _minEnergy(0)
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
 
 AMyCharacter::AMyCharacter(bool isDead, int32 health, int32 energy, uint8 damage, int32 maxHealth, int32 minHealth, int32 maxEnergy, int32 minEnergy)
-	: _isDead(isDead), _health(health), _energy(energy), _damage(damage), _maxHealth(maxHealth), _minHealth(minHealth), _maxEnergy(maxEnergy), _minEnergy(minEnergy)
+	: _isDead(isDead), _threshhold25(false), _threshhold50(false), _threshhold75(false), _health(health), _energy(energy), _damage(damage), _maxHealth(maxHealth), _minHealth(minHealth), _maxEnergy(maxEnergy), _minEnergy(minEnergy)
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	_spellSound = CreateDefaultSubobject<UAudioComponent>(TEXT("CurrentSpellSound"));
+	_spellSound->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -37,6 +40,16 @@ void AMyCharacter::Tick(float DeltaTime)
 void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+UAudioComponent* AMyCharacter::getSpellSoundComponent() const
+{
+	return _spellSound;
+}
+
+void AMyCharacter::setSpellSoundComponentSound(USoundCue sound)
+{
+	_spellSound->SetSound(&sound);
 }
 
 ECharacterStates AMyCharacter::getCharacterState() const

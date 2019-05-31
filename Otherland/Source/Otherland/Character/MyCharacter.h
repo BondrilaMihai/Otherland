@@ -14,7 +14,13 @@ enum class ECharacterStates : uint8
 	State_Dead			UMETA(DisplayName = "Dead"),
 	State_Jumping		UMETA(DisplayName = "Jumping"),
 	State_Hit			UMETA(DisplayName = "Hit"),
-	State_Shadowstep	UMETA(DisplayName = "Shadowstep")
+	State_DealingDamage UMETA(DisplayName = "DealingDamage"),
+	State_Shadowstep	UMETA(DisplayName = "Shadowstep"),
+	State_SpiritDrop	UMETA(DisplayName = "SpiritDrop"),
+	State_DaggerTp		UMETA(DisplayName = "DaggerTeleport"),
+	State_DaggerFlash	UMETA(DisplayName = "DaggerFlash"),
+	State_DaggerRain	UMETA(DisplayName = "DaggerRain"),
+	State_Flicker		UMETA(DisplayName = "Flicker")
 };
 
 /* Clasa de baza pentru caractere, cand faceti un caracter nou il derivati din asta, de ex un inamic */
@@ -42,7 +48,12 @@ public:
 
 protected:
 
-	bool _isDead;
+	UPROPERTY(BlueprintGetter = isDead, Category = "Test")
+		bool _isDead;
+
+	bool _threshhold25;
+	bool _threshhold50;
+	bool _threshhold75;
 
 	/** Starea caracterului */
 	UPROPERTY(BlueprintGetter = getCharacterState, BlueprintSetter = setCharacterState, Category = "Test")
@@ -68,7 +79,16 @@ protected:
 	UPROPERTY(BlueprintGetter = getMinEnergy, Category = "Test")
 		int32 _minEnergy;
 
+	/* COMPONENTELE */
+
+	/** Componenta care va reda un sunet specific unei abilitati cand este folosita. */
+	UPROPERTY()
+		UAudioComponent* _spellSound;
+
 public:
+
+	UAudioComponent* getSpellSoundComponent() const;
+	void setSpellSoundComponentSound(USoundCue sound);
 
 	/* GETTER & SETTER PENTRU STARILE CARACTERULUI */
 
@@ -119,7 +139,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Test")
 		virtual void MyTakeDamage(int32 amount);
 
-	bool isDead() const;
+	UFUNCTION(BlueprintGetter, Category = "Test")
+		bool isDead() const;
+
 	void setDead(bool value);
 };
 
